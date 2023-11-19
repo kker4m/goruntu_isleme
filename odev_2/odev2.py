@@ -1,28 +1,21 @@
 import cv2
 import numpy as np
 
-cap = cv2.VideoCapture(0)
-
+goruntu = cv2.VideoCapture(0)
 while True:
-    ret, frame = cap.read()
+    ret, resim = goruntu.read()
+    hsv = cv2.cvtColor(resim, cv2.COLOR_BGR2HSV)
 
-    hsv_gorsel = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    lower_red = np.array([0, 100, 100])
+    upper_red = np.array([25, 255, 255])
 
-    low_kirmizi = np.array([0, 100, 100])
-    up_kirmizi = np.array([10, 255, 255])
+    mask = cv2.inRange(hsv, lower_red, upper_red)
+    cikti = cv2.bitwise_and(resim, resim, mask=mask)
 
-    aralik = cv2.inRange(hsv_gorsel, low_kirmizi, up_kirmizi)
-    ters_aralik = 255 - aralik
-
-    result = cv2.bitwise_and(frame, frame, mask=aralik)
-
-    cv2.imshow('Kamera goruntusu', frame)
-    cv2.imshow('Cikti', result)
-
-
+    cv2.imshow('Orijinal Resim', resim)
+    cv2.imshow('Sadece Kirmizi', cikti)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-
-cap.release()
+goruntu.release()
 cv2.destroyAllWindows()
